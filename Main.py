@@ -8,53 +8,34 @@ st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layou
 st.image("logo.png", width=200)
 st.title("Search Courses by Group")
 
-
 file_path = "CS Groups.xlsx"
 
 # Initialize the session state for course input
 if 'course_input' not in st.session_state:
     st.session_state['course_input'] = ""
 
-# Function to display courses as clickable buttons
+# Function to display courses as clickable buttons in a 4-column layout
 def display_clickable_courses(dataframe):
     courses = dataframe['Description (COURSES)'].str.split().explode().str.upper().unique()
     unique_courses = sorted(set(courses))
-    num_columns = 4
-    course_table = pd.DataFrame([unique_courses[i:i+num_columns] for i in range(0, len(unique_courses), num_columns)])
     
-    def highlight_similar(course_name):
-        if pd.isnull(course_name):
-            return ''
-        elif course_name.startswith('CSCI'):
-            return 'background-color: lightblue'
-        elif course_name.startswith('ENGL'):
-            return 'background-color: lightgreen'
-        elif course_name.startswith('MATH'):
-            return 'background-color: lightcoral'
-        elif course_name.startswith('ECEN'):
-            return 'background-color: lightyellow'
-        elif course_name.startswith('PHYS'):
-            return 'background-color: lightpink'
-        elif course_name.startswith('HUMA'):
-            return 'background-color: lightgray'
-        elif course_name.startswith('NSCI'):
-            return 'background-color: lightcyan'
-        elif course_name.startswith('SSCI'):
-            return 'background-color: lightgoldenrodyellow'
-        else:
-            return ''
-    
-    # Display courses as clickable buttons
     st.subheader("Click on courses to add them")
-    for col in range(course_table.shape[1]):
-        for row in course_table[col]:
-            # Ensure row is a valid string before creating a button
-            if isinstance(row, str):
-                if st.button(row):
-                    if st.session_state['course_input']:
-                        st.session_state['course_input'] += f", {row}"
-                    else:
-                        st.session_state['course_input'] = row
+    
+    # Create rows with 4 columns
+    for i in range(0, len(unique_courses), 4):
+        cols = st.columns(4)  # Create 4 columns in each row
+        
+        for j in range(4):
+            if i + j < len(unique_courses):  # Make sure we don't go out of bounds
+                course_name = unique_courses[i + j]
+                
+                # Only create a button if course_name is a valid string
+                if isinstance(course_name, str):
+                    if cols[j].button(course_name):
+                        if st.session_state['course_input']:
+                            st.session_state['course_input'] += f", {course_name}"
+                        else:
+                            st.session_state['course_input'] = course_name
 
 # Ensure the file exists
 if os.path.exists(file_path):
@@ -80,7 +61,7 @@ if os.path.exists(file_path):
     if st.session_state['course_input']:
         results_df = search_courses(st.session_state['course_input'], data)
 
-        if not results_df.empty:
+        if not results_df.empty():
             sorted_df = results_df.sort_values(by="Ratio", ascending=False)
             st.subheader("Search Results:")
             st.dataframe(sorted_df)
