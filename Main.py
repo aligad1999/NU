@@ -10,12 +10,14 @@ st.title("Search Courses by Group")
 
 file_path = "CS Groups.xlsx"
 
-# Function to extract and display unique courses
-def display_unique_courses(dataframe):
-    courses = dataframe['Description (COURSES)'].str.split().explode().str.upper().unique()
+# Initialize the session state for course input
+if 'course_input' not in st.session_state:
+    st.session_state['course_input'] = ""
 
+# Function to display courses as clickable buttons
+def display_clickable_courses(dataframe):
+    courses = dataframe['Description (COURSES)'].str.split().explode().str.upper().unique()
     unique_courses = sorted(set(courses))
-    
     num_columns = 4
     course_table = pd.DataFrame([unique_courses[i:i+num_columns] for i in range(0, len(unique_courses), num_columns)])
     
@@ -35,29 +37,33 @@ def display_unique_courses(dataframe):
         elif course_name.startswith('HUMA'):
             return 'background-color: lightgray'
         elif course_name.startswith('NSCI'):
-            return 'background-color: lightcyan'  
+            return 'background-color: lightcyan'
         elif course_name.startswith('SSCI'):
             return 'background-color: lightgoldenrodyellow'
         else:
             return ''
     
-    styled_table = course_table.style.applymap(highlight_similar)
-    
+    # Display courses as clickable buttons
+    st.subheader("Click on courses to add them")
+    for col in range(course_table.shape[1]):
+        for row in course_table[col]:
+            if st.button(row):
+                if st.session_state['course_input']:
+                    st.session_state['course_input'] += f", {row}"
+                else:
+                    st.session_state['course_input'] = row
 
-    st.subheader("Unique Courses")
-    st.dataframe(styled_table.hide(axis='index'))
-
+# Ensure the file exists
 if os.path.exists(file_path):
     data = pd.read_excel(file_path)
-
     st.success("Data file successfully loaded!")
 
-    display_unique_courses(data)
+    # Display the clickable courses table
+    display_clickable_courses(data)
 
-    # Text input for courses to search
-    course_input = st.text_input("Enter the courses you want to search (comma-separated):")
+    # Display the current course_input text field
+    st.text_input("Selected Courses (comma-separated):", value=st.session_state['course_input'], key='course_input', disabled=False)
 
-    # Function to search courses
     def search_courses(course_list, dataframe):
         course_list = [course.strip().upper() for course in course_list.split(',')]
         results = []
@@ -68,25 +74,23 @@ if os.path.exists(file_path):
                 results.append({'GroupName': row['GroupName'], 'Ratio': ratio})
         return pd.DataFrame(results)
 
-    # Search and display results when input is provided
-    if course_input:
-        results_df = search_courses(course_input, data)
+    if st.session_state['course_input']:
+        results_df = search_courses(st.session_state['course_input'], data)
 
         if not results_df.empty:
             sorted_df = results_df.sort_values(by="Ratio", ascending=False)
-
             st.subheader("Search Results:")
             st.dataframe(sorted_df)
             st.subheader("Visualized Results:")
-
             fig, ax = plt.subplots()
             ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
             ax.set_xlabel("Match Ratio")
             ax.set_ylabel("GroupName")
             ax.set_title("Course Match Ratios by Group")
-            plt.gca().invert_yaxis() 
+            plt.gca().invert_yaxis()
             st.pyplot(fig)
         else:
-            st.warning("No matching groups found for the entered courses.")
+            st.warning("No matching groups found for the selected courses.")
 else:
     st.error(f"Data file '{file_path}' not found. Please ensure the file is placed in the correct directory.")
+
