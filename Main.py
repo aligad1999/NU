@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import matplotlib.pyplot as plt
 
 # App title and configuration
 st.set_page_config(page_title="Course Search App", page_icon=":books:", layout="wide")
@@ -10,12 +9,31 @@ st.title("Search Courses by Group")
 # Specify the path to the Excel file (located beside the main code)
 file_path = "CS Groups.xlsx"
 
+# Function to extract and display unique courses
+def display_unique_courses(dataframe):
+    # Extract all the courses from the 'Description (COURSES)' column
+    courses = dataframe['Description (COURSES)'].str.split().explode().unique()
+    
+    # Remove duplicates and sort the courses
+    unique_courses = sorted(set(courses))
+    
+    # Create a DataFrame for display with 4 columns for better visualization
+    num_columns = 4
+    course_table = pd.DataFrame([unique_courses[i:i+num_columns] for i in range(0, len(unique_courses), num_columns)])
+    
+    # Display the table with colored style
+    st.subheader("Unique Courses (No Duplicates)")
+    st.dataframe(course_table.style.applymap(lambda x: "background-color: lightblue"))
+
 # Ensure the file exists
 if os.path.exists(file_path):
     # Load data into a pandas dataframe
     data = pd.read_excel(file_path)
 
     st.success("Data file successfully loaded!")
+
+    # Display the unique courses table
+    display_unique_courses(data)
 
     # Text input for courses to search
     course_input = st.text_input("Enter the courses you want to search (comma-separated):")
