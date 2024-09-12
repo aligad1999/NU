@@ -11,8 +11,8 @@ file_path = "CS Groups.xlsx"
 
 # Function to extract and display unique courses
 def display_unique_courses(dataframe):
-    # Extract all the courses from the 'Description (COURSES)' column
-    courses = dataframe['Description (COURSES)'].str.split().explode().unique()
+    # Extract all the courses from the 'Description (COURSES)' column and convert to uppercase
+    courses = dataframe['Description (COURSES)'].str.split().explode().str.upper().unique()
     
     # Remove duplicates and sort the courses alphabetically
     unique_courses = sorted(set(courses))
@@ -25,21 +25,21 @@ def display_unique_courses(dataframe):
     def highlight_similar(course_name):
         if pd.isnull(course_name):  # Check for None or NaN
             return ''
-        elif upper(course_name).startswith('CSCI'):
+        elif course_name.startswith('CSCI'):
             return 'background-color: lightblue'
-        elif upper(course_name).startswith('ENGL'):
+        elif course_name.startswith('ENGL'):
             return 'background-color: lightgreen'
-        elif upper(course_name).startswith('MATH'):
+        elif course_name.startswith('MATH'):
             return 'background-color: lightcoral'
-        elif upper(course_name).startswith('ECEN'):
+        elif course_name.startswith('ECEN'):
             return 'background-color: lightyellow'
-        elif upper(course_name).startswith('PHYS'):
+        elif course_name.startswith('PHYS'):
             return 'background-color: lightpink'
-        elif upper(course_name).startswith('HUMA'):
+        elif course_name.startswith('HUMA'):
             return 'background-color: lightgray'
-        elif upper(course_name).startswith('NSCI'):
+        elif course_name.startswith('NSCI'):
             return 'background-color: lightpurple'
-        elif upper(course_name).startswith('SSCI'):
+        elif course_name.startswith('SSCI'):
             return 'background-color: lightorange'
         else:
             return ''
@@ -48,7 +48,7 @@ def display_unique_courses(dataframe):
     styled_table = course_table.style.applymap(highlight_similar)
     
     # Display the table with color styling and no index
-    st.subheader("Unique Courses (No Duplicates, Sorted Alphabetically)")
+    st.subheader("Unique Courses (No Duplicates, Sorted Alphabetically in Uppercase)")
     st.dataframe(styled_table.hide(axis='index'))  # Hide the index for a clean look
 
 # Ensure the file exists
@@ -90,3 +90,13 @@ if os.path.exists(file_path):
             st.subheader("Visualized Results:")
 
             fig, ax = plt.subplots()
+            ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
+            ax.set_xlabel("Match Ratio")
+            ax.set_ylabel("GroupName")
+            ax.set_title("Course Match Ratios by Group")
+            plt.gca().invert_yaxis()  # Invert the y-axis to show the highest ratio at the top
+            st.pyplot(fig)  # Display the plot
+        else:
+            st.warning("No matching groups found for the entered courses.")
+else:
+   
