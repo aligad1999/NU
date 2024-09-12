@@ -39,7 +39,7 @@ def display_unique_courses(dataframe):
         elif course_name.startswith('HUMA'):
             return 'background-color: lightgray'
         elif course_name.startswith('NSCI'):
-            return 'background-color: lightpurple'
+            return 'background-color: LightViolet'
         elif course_name.startswith('SSCI'):
             return 'background-color: lightorange'
         else:
