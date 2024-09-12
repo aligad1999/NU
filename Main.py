@@ -23,7 +23,9 @@ def display_unique_courses(dataframe):
     
     # Function to apply colors based on course name prefixes
     def highlight_similar(course_name):
-        if course_name.startswith('CSCI'):
+        if pd.isnull(course_name):  # Check for None or NaN
+            return ''
+        elif course_name.startswith('CSCI'):
             return 'background-color: lightblue'
         elif course_name.startswith('ENGL'):
             return 'background-color: lightgreen'
@@ -88,13 +90,3 @@ if os.path.exists(file_path):
             st.subheader("Visualized Results:")
 
             fig, ax = plt.subplots()
-            ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
-            ax.set_xlabel("Match Ratio")
-            ax.set_ylabel("GroupName")
-            ax.set_title("Course Match Ratios by Group")
-            plt.gca().invert_yaxis()  # Invert the y-axis to show the highest ratio at the top
-            st.pyplot(fig)  # Display the plot
-        else:
-            st.warning("No matching groups found for the entered courses.")
-else:
-    st.error(f"Data file '{file_path}' not found. Please ensure the file is placed in the correct directory.")
