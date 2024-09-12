@@ -53,5 +53,25 @@ if os.path.exists(file_path):
     if st.session_state['course_input']:
         results_df = search_courses(st.session_state['course_input'], data)
 
+        if not results_df.empty:
+            sorted_df = results_df.sort_values(by="Ratio", ascending=False)
+            st.subheader("Search Results:")
+            st.dataframe(sorted_df)
+
+            st.subheader("Visualized Results:")
+
+            # Set the height of the chart dynamically based on the number of rows
+            num_rows = len(sorted_df)
+            fig, ax = plt.subplots(figsize=(10, num_rows * 0.5))  # Dynamically adjust height based on rows
+
+            ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
+            ax.set_xlabel("Match Ratio")
+            ax.set_ylabel("GroupName")
+            ax.set_title("Course Match Ratios by Group")
+            plt.gca().invert_yaxis()
+
+            st.pyplot(fig)
+        else:
+            st.warning("No matching groups found for the selected courses.")
 else:
     st.error(f"Data file '{file_path}' not found. Please ensure the file is placed in the correct directory.")
