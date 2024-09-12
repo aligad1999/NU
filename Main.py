@@ -1,30 +1,25 @@
 import streamlit as st
 import pandas as pd
 import os
-import matplotlib.pyplot as plt  # Ensure matplotlib is imported for plotting
+import matplotlib.pyplot as plt
 
 # App title and configuration
 st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layout="wide")
 st.title("Search Courses by Group")
 
-# Specify the path to the Excel file (located beside the main code)
 file_path = "CS Groups.xlsx"
 
 # Function to extract and display unique courses
 def display_unique_courses(dataframe):
-    # Extract all the courses from the 'Description (COURSES)' column and convert to uppercase
     courses = dataframe['Description (COURSES)'].str.split().explode().str.upper().unique()
-    
-    # Remove duplicates and sort the courses alphabetically
+
     unique_courses = sorted(set(courses))
     
-    # Create a DataFrame for display with 4 columns for better visualization
     num_columns = 4
     course_table = pd.DataFrame([unique_courses[i:i+num_columns] for i in range(0, len(unique_courses), num_columns)])
     
-    # Function to apply colors based on course name prefixes
     def highlight_similar(course_name):
-        if pd.isnull(course_name):  # Check for None or NaN
+        if pd.isnull(course_name):
             return ''
         elif course_name.startswith('CSCI'):
             return 'background-color: lightblue'
@@ -39,27 +34,23 @@ def display_unique_courses(dataframe):
         elif course_name.startswith('HUMA'):
             return 'background-color: lightgray'
         elif course_name.startswith('NSCI'):
-            return 'background-color: lightcyan'  # Changed to a more visible color
+            return 'background-color: lightcyan'  
         elif course_name.startswith('SSCI'):
-            return 'background-color: lightgoldenrodyellow'  # Changed to a more visible color
+            return 'background-color: lightgoldenrodyellow'
         else:
             return ''
     
-    # Style the DataFrame by applying color based on similar course names
     styled_table = course_table.style.applymap(highlight_similar)
     
-    # Display the table with color styling and no index
-    st.subheader("Unique Courses")
-    st.dataframe(styled_table.hide(axis='index'))  # Hide the index for a clean look
 
-# Ensure the file exists
+    st.subheader("Unique Courses")
+    st.dataframe(styled_table.hide(axis='index'))
+
 if os.path.exists(file_path):
-    # Load data into a pandas dataframe
     data = pd.read_excel(file_path)
 
     st.success("Data file successfully loaded!")
 
-    # Display the unique courses table
     display_unique_courses(data)
 
     # Text input for courses to search
@@ -81,13 +72,10 @@ if os.path.exists(file_path):
         results_df = search_courses(course_input, data)
 
         if not results_df.empty:
-            # Sort the results by Ratio in descending order
             sorted_df = results_df.sort_values(by="Ratio", ascending=False)
 
             st.subheader("Search Results:")
-            st.dataframe(sorted_df)  # Display the sorted table
-
-            # Plot the results
+            st.dataframe(sorted_df)
             st.subheader("Visualized Results:")
 
             fig, ax = plt.subplots()
@@ -95,8 +83,8 @@ if os.path.exists(file_path):
             ax.set_xlabel("Match Ratio")
             ax.set_ylabel("GroupName")
             ax.set_title("Course Match Ratios by Group")
-            plt.gca().invert_yaxis()  # Invert the y-axis to show the highest ratio at the top
-            st.pyplot(fig)  # Display the plot
+            plt.gca().invert_yaxis() 
+            st.pyplot(fig)
         else:
             st.warning("No matching groups found for the entered courses.")
 else:
