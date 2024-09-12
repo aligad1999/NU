@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # App title and configuration
 st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layout="wide")
-st.image("logo.png", width=200)
+st.image("logos_new.png", width=200)
 st.title("Search Courses by Group")
 
 file_path = "CS Groups.xlsx"
