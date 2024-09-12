@@ -14,16 +14,40 @@ def display_unique_courses(dataframe):
     # Extract all the courses from the 'Description (COURSES)' column
     courses = dataframe['Description (COURSES)'].str.split().explode().unique()
     
-    # Remove duplicates and sort the courses
+    # Remove duplicates and sort the courses alphabetically
     unique_courses = sorted(set(courses))
     
     # Create a DataFrame for display with 4 columns for better visualization
     num_columns = 4
     course_table = pd.DataFrame([unique_courses[i:i+num_columns] for i in range(0, len(unique_courses), num_columns)])
     
-    # Display the table with colored style
-    st.subheader("Unique Courses (No Duplicates)")
-    st.dataframe(course_table.style.applymap(lambda x: "background-color: lightblue"))
+    # Function to apply colors based on course name prefixes
+    def highlight_similar(course_name):
+        if course_name.startswith('CSCI'):
+            return 'background-color: lightblue'
+        elif course_name.startswith('ENGL'):
+            return 'background-color: lightgreen'
+        elif course_name.startswith('MATH'):
+            return 'background-color: lightcoral'
+        elif course_name.startswith('ECEN'):
+            return 'background-color: lightyellow'
+        elif course_name.startswith('PHYS'):
+            return 'background-color: lightpink'
+        elif course_name.startswith('HUMA'):
+            return 'background-color: lightgray'
+        elif course_name.startswith('NSCI'):
+            return 'background-color: lightpurple'
+        elif course_name.startswith('SSCI'):
+            return 'background-color: lightorange'
+        else:
+            return ''
+    
+    # Style the DataFrame by applying color based on similar course names
+    styled_table = course_table.style.applymap(highlight_similar)
+    
+    # Display the table with color styling and no index
+    st.subheader("Unique Courses (No Duplicates, Sorted Alphabetically)")
+    st.dataframe(styled_table.hide(axis='index'))  # Hide the index for a clean look
 
 # Ensure the file exists
 if os.path.exists(file_path):
