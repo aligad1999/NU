@@ -28,16 +28,15 @@ if os.path.exists(file_path):
             ratio = sum(course in courses for course in course_list) / len(course_list)
             if ratio > 0:
                 results.append({'GroupName': row['GroupName'], 'Ratio': ratio})
-        return sorted(results, key=lambda x: x['Ratio'], reverse=True)
+        return pd.DataFrame(results)
 
     # Search and display results when input is provided
     if course_input:
-        results = search_courses(course_input, data)
+        results_df = search_courses(course_input, data)
 
-        if results:
+        if not results_df.empty:
             st.subheader("Search Results:")
-            for result in results:
-                st.write(f"GroupName: {result['GroupName']} | Match Ratio: {result['Ratio']:.2f}")
+            st.dataframe(results_df)  # Display results in a table format
         else:
             st.warning("No matching groups found for the entered courses.")
 else:
