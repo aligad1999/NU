@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import matplotlib.pyplot as plt  # Ensure matplotlib is imported for plotting
 
 # App title and configuration
 st.set_page_config(page_title="Course Search App", page_icon=":books:", layout="wide")
@@ -99,4 +100,4 @@ if os.path.exists(file_path):
         else:
             st.warning("No matching groups found for the entered courses.")
 else:
-   
+    st.error(f"Data file '{file_path}' not found. Please ensure the file is placed in the correct directory.")
