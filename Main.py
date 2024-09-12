@@ -8,6 +8,7 @@ st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layou
 st.image("logo.png", width=200)
 st.title("Search Courses by Group")
 
+
 file_path = "CS Groups.xlsx"
 
 # Initialize the session state for course input
@@ -47,11 +48,13 @@ def display_clickable_courses(dataframe):
     st.subheader("Click on courses to add them")
     for col in range(course_table.shape[1]):
         for row in course_table[col]:
-            if st.button(row):
-                if st.session_state['course_input']:
-                    st.session_state['course_input'] += f", {row}"
-                else:
-                    st.session_state['course_input'] = row
+            # Ensure row is a valid string before creating a button
+            if isinstance(row, str):
+                if st.button(row):
+                    if st.session_state['course_input']:
+                        st.session_state['course_input'] += f", {row}"
+                    else:
+                        st.session_state['course_input'] = row
 
 # Ensure the file exists
 if os.path.exists(file_path):
@@ -93,4 +96,3 @@ if os.path.exists(file_path):
             st.warning("No matching groups found for the selected courses.")
 else:
     st.error(f"Data file '{file_path}' not found. Please ensure the file is placed in the correct directory.")
-
