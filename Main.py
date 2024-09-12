@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 # App title and configuration
 st.set_page_config(page_title="Course Search App", page_icon=":books:", layout="wide")
@@ -28,18 +29,29 @@ if os.path.exists(file_path):
             ratio = sum(course in courses for course in course_list) / len(course_list)
             if ratio > 0:
                 results.append({'GroupName': row['GroupName'], 'Ratio': ratio})
-        # Convert results to a DataFrame
-        results_df = pd.DataFrame(results)
-        # Sort by 'Ratio' in descending order
-        return results_df.sort_values(by='Ratio', ascending=False)
+        return pd.DataFrame(results)
 
     # Search and display results when input is provided
     if course_input:
         results_df = search_courses(course_input, data)
 
         if not results_df.empty:
-            st.subheader("Search Results (sorted by Ratio):")
-            st.dataframe(results_df)  # Display sorted results in a table format
+            # Sort the results by Ratio in descending order
+            sorted_df = results_df.sort_values(by="Ratio", ascending=False)
+
+            st.subheader("Search Results (Sorted by Match Ratio):")
+            st.dataframe(sorted_df)  # Display the sorted table
+
+            # Plot the results
+            st.subheader("Visualized Results:")
+
+            fig, ax = plt.subplots()
+            ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
+            ax.set_xlabel("Match Ratio")
+            ax.set_ylabel("GroupName")
+            ax.set_title("Course Match Ratios by Group")
+            plt.gca().invert_yaxis()  # Invert the y-axis to show the highest ratio at the top
+            st.pyplot(fig)  # Display the plot
         else:
             st.warning("No matching groups found for the entered courses.")
 else:
