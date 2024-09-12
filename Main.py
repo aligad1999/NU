@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt  # Ensure matplotlib is imported for plotting
 
 # App title and configuration
-st.set_page_config(page_title="Course Search App", page_icon=":books:", layout="wide")
+st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layout="wide")
 st.title("Search Courses by Group")
 
 # Specify the path to the Excel file (located beside the main code)
@@ -49,7 +49,7 @@ def display_unique_courses(dataframe):
     styled_table = course_table.style.applymap(highlight_similar)
     
     # Display the table with color styling and no index
-    st.subheader("Unique Courses (No Duplicates, Sorted Alphabetically in Uppercase)")
+    st.subheader("Unique Courses")
     st.dataframe(styled_table.hide(axis='index'))  # Hide the index for a clean look
 
 # Ensure the file exists
@@ -84,7 +84,7 @@ if os.path.exists(file_path):
             # Sort the results by Ratio in descending order
             sorted_df = results_df.sort_values(by="Ratio", ascending=False)
 
-            st.subheader("Search Results (Sorted by Match Ratio):")
+            st.subheader("Search Results:")
             st.dataframe(sorted_df)  # Display the sorted table
 
             # Plot the results
