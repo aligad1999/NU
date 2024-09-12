@@ -25,21 +25,21 @@ def display_unique_courses(dataframe):
     def highlight_similar(course_name):
         if pd.isnull(course_name):  # Check for None or NaN
             return ''
-        elif course_name.startswith('CSCI'):
+        elif upper(course_name).startswith('CSCI'):
             return 'background-color: lightblue'
-        elif course_name.startswith('ENGL'):
+        elif upper(course_name).startswith('ENGL'):
             return 'background-color: lightgreen'
-        elif course_name.startswith('MATH'):
+        elif upper(course_name).startswith('MATH'):
             return 'background-color: lightcoral'
-        elif course_name.startswith('ECEN'):
+        elif upper(course_name).startswith('ECEN'):
             return 'background-color: lightyellow'
-        elif course_name.startswith('PHYS'):
+        elif upper(course_name).startswith('PHYS'):
             return 'background-color: lightpink'
-        elif course_name.startswith('HUMA'):
+        elif upper(course_name).startswith('HUMA'):
             return 'background-color: lightgray'
-        elif course_name.startswith('NSCI'):
+        elif upper(course_name).startswith('NSCI'):
             return 'background-color: lightpurple'
-        elif course_name.startswith('SSCI'):
+        elif upper(course_name).startswith('SSCI'):
             return 'background-color: lightorange'
         else:
             return ''
