@@ -39,7 +39,7 @@ if os.path.exists(file_path):
     display_clickable_courses(data)
 
     st.text_input("Selected Courses (comma-separated):", value=st.session_state['course_input'], key='course_input', disabled=False)
-
+    
     def search_courses(course_list, dataframe):
         course_list = [course.strip().upper() for course in course_list.split(',')]
         results = []
@@ -62,7 +62,7 @@ if os.path.exists(file_path):
 
             # Set the height of the chart dynamically based on the number of rows
             num_rows = len(sorted_df)
-            fig, ax = plt.subplots(figsize=(10, num_rows * 0.5))  # Dynamically adjust height based on rows
+            fig, ax = plt.subplots(figsize=(10, num_rows * 0.5)) 
 
             ax.barh(sorted_df['GroupName'], sorted_df['Ratio'], color='skyblue')
             ax.set_xlabel("Match Ratio")
