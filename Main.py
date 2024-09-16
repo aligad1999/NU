@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layout="wide")
 st.image("logos_new.png", width=400)
 st.title("Search Courses by Group")
-
+st.write("This tool helps you find the optimal course block for a set of selected courses. Simply choose your required courses, and the tool will analyze them to provide the best matching block, ensuring an efficient and well-organized schedule. With our recent update, it now supports AI groups, making it even easier for students and professionals in AI-related fields to find the ideal course combinations.")
 file_path = "CS Groups.xlsx"
 
 if 'course_input' not in st.session_state:
