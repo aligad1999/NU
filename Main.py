@@ -8,7 +8,7 @@ st.set_page_config(page_title="NU Course Search App", page_icon=":books:", layou
 st.image("logos_new.png", width=400)
 st.title("Search Courses by Group")
 
-file_path = "CS Groups.xlsx"
+file_path = "CS_groups_Fall24.xlsx"
 
 if 'course_input' not in st.session_state:
     st.session_state['course_input'] = ""
